@@ -9,7 +9,14 @@ namespace rc_switch {
 
     void RCSwitchComponent::setup() {
         ESP_LOGCONFIG(TAG, "Setting up RCSwitch on pin %d", this->rx_pin_);
-        this->rc_switch_.enableReceive(this->rx_pin_);        
+        
+        // Use digitalPinToInterrupt to map the pin to an interrupt
+        int interrupt = digitalPinToInterrupt(this->rx_pin_);
+        if (interrupt == NOT_AN_INTERRUPT) {
+            ESP_LOGE(TAG, "Pin %d is not an interrupt-capable pin!", this->rx_pin_);
+            return;
+        }
+        this->rc_switch_.enableReceive(interrupt);        
     }
 
     void RCSwitchComponent::loop() {

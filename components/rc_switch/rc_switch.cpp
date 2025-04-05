@@ -21,14 +21,15 @@ namespace rc_switch {
 
     void RCSwitchComponent::loop() {
         if (this->rc_switch_.available()) {
-            unsigned long value = this->rc_switch_.getReceivedValue();
-            unsigned long bitlen = this->rc_switch_.getReceivedBitlength();
-            unsigned long protocol = this->rc_switch_.getReceivedProtocol();
-            if (value != 0) {
-                ESP_LOGCONFIG(TAG, "Received: %d / %d Protocol: %d", value, bitlen, protocol);
+            unsigned long value = this->rc_switch_.getReceivedValue();            
+            if (value != 0) {                
                 char buffer[32];
                 snprintf(buffer, sizeof(buffer), "%lu", value);
                 this->publish_state(buffer);
+
+                unsigned long bitlen = this->rc_switch_.getReceivedBitlength();
+                unsigned long protocol = this->rc_switch_.getReceivedProtocol();
+                ESP_LOGCONFIG(TAG, "Received: %d / %d Protocol: %d", value, bitlen, protocol);
             }
             this->rc_switch_.resetAvailable();
         }
